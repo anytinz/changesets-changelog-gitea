@@ -1,0 +1,58 @@
+{
+  "name": "changesets-changelog-gitea",
+  "image": "mcr.microsoft.com/devcontainers/base:trixie",
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {},
+    "ghcr.io/joshuanianji/devcontainer-features/mount-pnpm-store:1": {},
+    "ghcr.io/stuartleeks/dev-container-features/shell-history:0": {}
+  },
+  "overrideFeatureInstallOrder": [
+    "ghcr.io/devcontainers/features/node",
+    "ghcr.io/stuartleeks/dev-container-features/shell-history",
+    "ghcr.io/joshuanianji/devcontainer-features/mount-pnpm-store"
+  ],
+  "containerEnv": {
+    "HTTPS_PROXY": "${localEnv:HTTPS_PROXY}",
+    "HTTP_PROXY": "${localEnv:HTTP_PROXY}",
+    "NO_PROXY": "${localEnv:NO_PROXY}",
+    "http_proxy": "${localEnv:http_proxy}",
+    "https_proxy": "${localEnv:https_proxy}",
+    "no_proxy": "${localEnv:no_proxy}"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "editorconfig.editorconfig",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "[javascript]": {
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        },
+        "[javascriptreact]": {
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        },
+        "[json]": {
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        },
+        "[jsonc]": {
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        },
+        "eslint.format.enable": true,
+        "js/ts.tsdk.path": "node_modules/typescript/lib",
+        "js/ts.tsserver.maxMemory": 8192,
+        "yaml.schemas": {
+          "https://www.schemastore.org/github-action.json": "/workspaces/changesets-changelog-gitea/.gitea/workflows/**/action.yaml",
+          "https://www.schemastore.org/github-workflow.json": "/workspaces/changesets-changelog-gitea/.gitea/workflows/**/*.yaml"
+        }
+      }
+    }
+  }
+}

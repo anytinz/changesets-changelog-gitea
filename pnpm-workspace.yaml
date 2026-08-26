@@ -1,0 +1,7 @@
+savePrefix: ""
+
+publicHoistPattern:
+  - '@typescript/*'
+
+allowBuilds:
+  unrs-resolver: true
