@@ -1,5 +1,11 @@
 # changesets-changelog-gitea
 
+## 0.2.0
+
+### Minor Changes
+
+- [#9](https://github.com/anytinz/changesets-changelog-gitea/pull/9) [`4f8ac2e`](https://github.com/anytinz/changesets-changelog-gitea/commit/4f8ac2e9e4f35a2f981936968f9721d6353ba16b) Thanks [@anytinz](https://github.com/anytinz)! - Replace the `@go-gitea/sdk.js` dependency with a typed Gitea API client generated from the Gitea 1.27 OpenAPI spec using `openapi-typescript` and `openapi-fetch`. The generated client (in `src/generated/`) is created at install time by the `prepare` script and is type-only, so the published bundle now depends on `openapi-fetch` instead of `@go-gitea/sdk.js`.
+
 ## 0.1.1
 
 ### Patch Changes
