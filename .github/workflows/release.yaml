@@ -26,7 +26,6 @@ jobs:
       - name: Setup pnpm and Node.js
         uses: pnpm/setup@v2
         with:
-          runtime: node@lts
           cache: true
 
       - name: Version or publish via changesets

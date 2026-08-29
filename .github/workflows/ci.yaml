@@ -19,7 +19,6 @@ jobs:
       - name: Setup pnpm and Node.js
         uses: pnpm/setup@v2
         with:
-          runtime: node@lts
           cache: true
       - name: Lint
         run: pnpm lint
@@ -51,7 +50,6 @@ jobs:
       - name: Setup pnpm and Node.js
         uses: pnpm/setup@v2
         with:
-          runtime: node@lts
           cache: true
       - name: Build
         run: pnpm build
