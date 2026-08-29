@@ -1,6 +1,4 @@
-import { Gitea, RequestError } from '@go-gitea/sdk.js'
-import { ENV } from '@/env'
-import { isFullString, normalizeServerUrl } from '@/helper'
+import { getData, getGiteaClient, isNotFound } from '@/gitea'
 
 export interface CommitInfoOptions {
   readonly serverUrl?: string
@@ -60,30 +58,6 @@ const validateRepoName = (repo: string): void => {
   }
 }
 
-const getGiteaClient = (
-  serverUrl: string | undefined,
-): { gitea: Gitea; serverUrl: string } => {
-  const { GITEA_SERVER_URL, GITEA_TOKEN } = ENV
-  const resolvedServerUrl = serverUrl ?? GITEA_SERVER_URL
-  if (resolvedServerUrl === null) {
-    throw new Error(
-      'Please provide a server URL to this changelog generator like this:\n"changelog": ["@changesets/changelog-gitea", { "serverUrl": "https://gitea.example.com" }]\nor set the GITEA_SERVER_URL environment variable.',
-    )
-  }
-  if (!isFullString(GITEA_TOKEN)) {
-    throw new TypeError(
-      `Please create a Gitea access token at ${normalizeServerUrl(resolvedServerUrl)}/user/settings/applications with \`read:repository\` permission and add it as the GITEA_TOKEN environment variable`,
-    )
-  }
-  return {
-    gitea: new Gitea({
-      baseUrl: normalizeServerUrl(resolvedServerUrl),
-      auth: GITEA_TOKEN,
-    }),
-    serverUrl: normalizeServerUrl(resolvedServerUrl),
-  }
-}
-
 const splitRepo = (repo: string): [owner: string, name: string] => {
   const [owner, name] = repo.split('/')
   if (owner === undefined || name === undefined) {
@@ -92,10 +66,6 @@ const splitRepo = (repo: string): [owner: string, name: string] => {
     )
   }
   return [owner, name]
-}
-
-const isNotFound = (error: unknown): boolean => {
-  return error instanceof RequestError && error.status === 404
 }
 
 /*
@@ -135,36 +105,40 @@ export const getCommitInfo = async (
     const { gitea } = getGiteaClient(options.serverUrl)
     const [owner, repo] = splitRepo(options.repo)
 
-    const commitResponse = await gitea.rest.repository
-      .repoGetSingleCommit({
-        owner,
-        repo,
-        sha: options.commit,
-      })
-      .catch((error) => {
-        if (isNotFound(error)) {
-          return
-        }
-        throw error
-      })
+    const commitResponse = await gitea.GET('/repos/{owner}/{repo}/git/commits/{sha}', {
+      params: {
+        path: {
+          owner,
+          repo,
+          sha: options.commit,
+        },
+      },
+    }).catch((error) => {
+      if (isNotFound(error)) {
+        return
+      }
+      throw error
+    })
     if (commitResponse === undefined) {
       return null
     }
-    const data = commitResponse.data
+    const data = getData(commitResponse)
 
-    const pullResponse = await gitea.rest.repository
-      .repoGetCommitPullRequest({
-        owner,
-        repo,
-        sha: options.commit,
-      })
-      .catch((error) => {
-        if (isNotFound(error)) {
-          return
-        }
-        throw error
-      })
-    const pr = pullResponse?.data
+    const pullResponse = await gitea.GET('/repos/{owner}/{repo}/commits/{sha}/pull', {
+      params: {
+        path: {
+          owner,
+          repo,
+          sha: options.commit,
+        },
+      },
+    }).catch((error) => {
+      if (isNotFound(error)) {
+        return
+      }
+      throw error
+    })
+    const pr = pullResponse === undefined ? undefined : getData(pullResponse)
 
     const commitUrl = data.html_url
     if (commitUrl === undefined) {
@@ -213,22 +187,24 @@ export const getPullRequestInfo = async (
     const { gitea, serverUrl } = getGiteaClient(options.serverUrl)
     const [owner, repo] = splitRepo(options.repo)
 
-    const pullResponse = await gitea.rest.repository
-      .repoGetPullRequest({
-        owner,
-        repo,
-        index: options.pull,
-      })
-      .catch((error) => {
-        if (isNotFound(error)) {
-          return
-        }
-        throw error
-      })
+    const pullResponse = await gitea.GET('/repos/{owner}/{repo}/pulls/{index}', {
+      params: {
+        path: {
+          owner,
+          repo,
+          index: options.pull,
+        },
+      },
+    }).catch((error) => {
+      if (isNotFound(error)) {
+        return
+      }
+      throw error
+    })
     if (pullResponse === undefined) {
       return null
     }
-    const data = pullResponse.data
+    const data = getData(pullResponse)
 
     const pullUrl = data.html_url
     if (pullUrl === undefined) {

@@ -17,13 +17,15 @@
   ],
   "scripts": {
     "build": "tsdown",
+    "gitea:types": "node scripts/generate-gitea-schema.js",
     "lint": "eslint --cache --concurrency 8 .",
+    "prepare": "pnpm gitea:types",
     "test": "vitest run",
     "test:type": "tsc --noEmit"
   },
   "dependencies": {
     "@changesets/types": "7.0.0",
-    "@go-gitea/sdk.js": "0.3.0"
+    "openapi-fetch": "0.17.0"
   },
   "devDependencies": {
     "@anytinz/eslint-config": "2.7.1",
@@ -33,6 +35,7 @@
     "better-typescript-lib": "2.12.0",
     "changeset": "0.2.6",
     "eslint": "9.39.5",
+    "openapi-typescript": "7.13.0",
     "tsdown": "0.22.14",
     "typescript": "5.9.3",
     "vitest": "4.1.10"
