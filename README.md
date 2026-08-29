@@ -1,4 +1,4 @@
-# @changesets/changelog-gitea
+# changesets-changelog-gitea
 
 A changelog entry generator for [changesets](https://github.com/changesets/changesets)
 that links to Gitea commits, pull requests and users. It is a Gitea port of
@@ -9,7 +9,19 @@ client for all Gitea API calls.
 ## Install
 
 ```bash
-pnpm add --save-dev @changesets/changelog-gitea
+npm install --save-dev changesets-changelog-gitea
+```
+
+```bash
+pnpm add --save-dev changesets-changelog-gitea
+```
+
+```bash
+yarn add --dev changesets-changelog-gitea
+```
+
+```bash
+bun add --dev changesets-changelog-gitea
 ```
 
 ## Usage
@@ -18,7 +30,7 @@ Configure `changelog` in your `.changeset/config.json`:
 
 ```json
 {
-  "changelog": ["@changesets/changelog-gitea", { "serverUrl": "https://gitea.example.com", "repo": "org/repo" }]
+  "changelog": ["changesets-changelog-gitea", { "serverUrl": "https://gitea.example.com/", "repo": "org/repo" }]
 }
 ```
 
@@ -54,7 +66,7 @@ environment variable.
 - **Type:** `string`
 - **Default:** `process.env.GITEA_SERVER_URL`
 
-Base URL of your Gitea instance, e.g. `https://gitea.example.com`. Trailing
+Base URL of your Gitea instance, e.g. `https://gitea.example.com/`. Trailing
 slashes are stripped. Required unless `GITEA_SERVER_URL` is set.
 
 ### `disableThanks`
