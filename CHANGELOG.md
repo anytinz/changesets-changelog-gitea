@@ -1,5 +1,11 @@
 # changesets-changelog-gitea
 
+## 0.3.0
+
+### Minor Changes
+
+- [#11](https://github.com/anytinz/changesets-changelog-gitea/pull/11) [`c841a64`](https://github.com/anytinz/changesets-changelog-gitea/commit/c841a64b5ab1cef2ff8c5f0d6af450eeb924bfa3) Thanks [@anytinz](https://github.com/anytinz)! - Narrow the supported Node.js range so that `^24.11` is the minimum supported 24.x release.
+
 ## 0.2.0
 
 ### Minor Changes
