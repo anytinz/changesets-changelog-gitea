@@ -2,6 +2,7 @@
   "name": "changesets-changelog-gitea",
   "image": "mcr.microsoft.com/devcontainers/base:trixie",
   "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/node:2": {},
     "ghcr.io/joshuanianji/devcontainer-features/mount-pnpm-store:1": {},
     "ghcr.io/stuartleeks/dev-container-features/shell-history:0": {}
