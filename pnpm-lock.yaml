@@ -109,9 +109,6 @@ importers:
 
   .:
     dependencies:
-      '@changesets/types':
-        specifier: 7.0.0
-        version: 7.0.0
       openapi-fetch:
         specifier: 0.17.0
         version: 0.17.0
@@ -125,6 +122,9 @@ importers:
       '@changesets/cli':
         specifier: 3.0.1
         version: 3.0.1
+      '@changesets/types':
+        specifier: 7.0.0
+        version: 7.0.0
       '@types/node':
         specifier: 22.20.1
         version: 22.20.1
