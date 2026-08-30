@@ -1,5 +1,11 @@
 # changesets-changelog-gitea
 
+## 0.3.1
+
+### Patch Changes
+
+- [#19](https://github.com/anytinz/changesets-changelog-gitea/pull/19) [`a0683de`](https://github.com/anytinz/changesets-changelog-gitea/commit/a0683def0e538527bfdea1c37192b3165670d6c8) Thanks [@anytinz](https://github.com/anytinz)! - fix: add prepublishOnly script to include dist
+
 ## 0.3.0
 
 ### Minor Changes
