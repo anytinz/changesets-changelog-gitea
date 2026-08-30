@@ -20,6 +20,7 @@
     "gitea:types": "node scripts/generate-gitea-schema.js",
     "lint": "eslint --cache --concurrency 8 .",
     "prepare": "pnpm gitea:types",
+    "prepublishOnly": "pnpm build",
     "test": "vitest run",
     "test:type": "tsc --noEmit"
   },
