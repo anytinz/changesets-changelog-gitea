@@ -6,7 +6,7 @@ import openapiTS, { astToString } from 'openapi-typescript'
 
 const GITEA_VERSION = '1.27'
 const SPEC_URL = 'https://docs.gitea.com/openapi3-27.json'
-const SPEC_SHA256 = 'e38a24406e913bce8c8a81b1d680b85dda4deec15f2ee5c3abeaaca63205cc95'
+const SPEC_SHA256 = '4a334f1bc36193b2bbf1d2f832d29052f16cc02944df32e95db59d931a4d64ee'
 
 const repoRoot = path.resolve(import.meta.dirname, '..')
 const cacheDir = path.join(repoRoot, 'node_modules', '.cache', 'gitea')
