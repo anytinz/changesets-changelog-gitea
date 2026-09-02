@@ -58,7 +58,7 @@ const validateRepoName = (repo: string): void => {
   }
 }
 
-const splitRepo = (repo: string): [owner: string, name: string] => {
+export const splitRepo = (repo: string): [owner: string, name: string] => {
   const [owner, name] = repo.split('/')
   if (owner === undefined || name === undefined) {
     throw new Error(
