@@ -1,5 +1,16 @@
 # changesets-changelog-gitea
 
+## 0.4.0
+
+### Minor Changes
+
+- [#21](https://github.com/anytinz/changesets-changelog-gitea/pull/21) [`dc97b21`](https://github.com/anytinz/changesets-changelog-gitea/commit/dc97b21a72095f169f0ec16e2cd82fac791bed1d) Thanks [@anytinz](https://github.com/anytinz)! - Resolve pull request links for changes merged with a merge commit. Gitea only
+  links *merge commits* to their pull request, while Changesets reports the
+  commit that first added the changeset (the feature-branch commit for a
+  PR-merged change), so such changelog lines used to lack a PR link. The
+  generator now scans the repository's merged pull requests for the one whose
+  commit list contains the changeset commit, and links that pull request.
+
 ## 0.3.1
 
 ### Patch Changes
