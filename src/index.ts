@@ -1,4 +1,5 @@
 import { ENV } from '@/env'
+import { findPullContainingCommit } from '@/find-pull'
 import { getCommitInfo, getPullRequestInfo } from '@/get-info'
 import { isFullString, normalizeServerUrl } from '@/helper'
 import { buildReleaseLineTokens, renderTemplate } from '@/render-template'
@@ -113,9 +114,28 @@ const changelogFunctions: ChangelogFunctions = {
       const commitToFetchFrom = parsed.commitFromSummary ?? changeset.commit
       if (commitToFetchFrom !== undefined) {
         const info = await getCommitInfo({ serverUrl, repo, commit: commitToFetchFrom })
-        links.pull = info?.pull?.markdownLink
-        links.commit = info?.commit.markdownLink
-        links.user = info?.author?.markdownLink
+
+        // On Gitea only merge commits are linked to their pull request, while
+        // Changesets reports the commit that *added* the changeset. For a
+        // change merged through a pull request that commit lives on the
+        // feature branch and carries no PR association, so recover the PR by
+        // scanning the repository's merged pull requests for the one whose
+        // commit list contains it.
+        const resolvedPull = parsed.commitFromSummary === null && info?.pull === undefined
+          ? await findPullContainingCommit({ serverUrl, repo, commit: commitToFetchFrom })
+          : null
+
+        const pullInfo = resolvedPull === null
+          ? null
+          : await getPullRequestInfo({ serverUrl, repo, pull: resolvedPull })
+
+        // The lookup carrying the PR also carries the PR opener's account,
+        // which is the author to thank; the commit link stays on the
+        // changeset's own commit when it resolved.
+        const prCarryingInfo = pullInfo?.pull === undefined ? info : pullInfo
+        links.pull = prCarryingInfo?.pull?.markdownLink
+        links.commit = (info?.commit ?? pullInfo?.commit)?.markdownLink
+        links.user = prCarryingInfo?.author?.markdownLink ?? info?.author?.markdownLink
       }
     } else {
       const info = await getPullRequestInfo({ serverUrl, repo, pull: parsed.prFromSummary })

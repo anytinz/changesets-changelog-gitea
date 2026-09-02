@@ -147,9 +147,83 @@ Examples:
 Release lines generated from a changeset summary support the same keywords as
 `@changesets/changelog-github`:
 
-- `PR: #123` / `pull: 123` — link to the pull request
+- `PR: #123` / `pull: 123` / `pull request: #123` — link to the pull request
 - `commit: abc123` — link to a commit
 - `author: user` / `user: @user` — thank a user
+
+The keywords must sit at the **start of a line** (leading whitespace is
+allowed); anywhere else they are treated as plain summary text. Each matched
+keyword (from the start of the line up to the number or user name) is removed
+from the summary before it is written to the changelog:
+
+```md
+---
+"my-package": patch
+---
+
+Fix an edge case in the parser.
+
+PR: #123
+author: @ghost
+```
+
+Notes on how the keywords interact:
+
+- `PR:` (or `pull:` / `pull request:`) takes precedence: the release line
+  links to that pull request instead of resolving the commit. This is mostly
+  needed when the pull request is old, or to attribute a change to a pull
+  request that the [auto detection](#auto-pull-request-detection) below
+  cannot find (e.g. beyond its scan window).
+- `commit:` given together with `PR:` overrides the commit link with the given
+  commit, instead of using the pull request's merge commit.
+- Without any keyword, the generator links the commit that introduced the
+  changeset (found via git history) — or, when that commit has no pull
+  request association, the pull request that merged it (see [auto pull
+  request detection](#auto-pull-request-detection)).
+- `author:` / `user:` may be repeated on separate lines to thank several
+  users; when omitted, the author of the commit (or pull request) is used.
+- Only the first `PR:` / `pull:` line and the first `commit:` line are
+  consumed.
+
+> [!WARNING]
+> A keyword that is not at the start of a line is silently ignored. For
+> example, `…the parser. PR: #123` keeps `PR: #123` in the summary, and the
+> bare `#123` is then turned into an *issue* reference (see below) instead of
+> a pull request link.
+
+#### Bare issue references
+
+Any bare `#123` in the summary that is not part of an existing Markdown link
+is linked to the corresponding issue page:
+
+`[#123](<serverUrl>/<repo>/issues/123)`
+
+Gitea redirects `/issues/123` to `/pulls/123` when the number belongs to a
+pull request, so the link works for pull requests too. Existing links are left
+untouched, and numbers preceded by a word character (e.g. `C#1`) are not
+linkified.
+
+### Auto pull request detection
+
+On Gitea, only *merge commits* are linked to their pull request, while
+Changesets reports the commit that first added the changeset — for a change
+merged through a pull request that is the feature-branch commit, which Gitea
+does not associate with the PR. When the changeset has no `PR:` keyword and
+the reported commit has no linked pull request, the generator scans the
+repository's merged pull requests (newest first) for the one whose commit
+list contains the commit, and links that pull request. Merge-commit merges
+therefore produce PR links automatically, just like squash merges and like
+GitHub (where any commit that was part of a merged pull request stays linked
+to it).
+
+The lookup is best-effort and silent. It is skipped entirely when the commit
+already has a pull request association (merge and squash commits), and it
+stops after the most recent ~60 merged pull requests — beyond that window,
+and for commits pushed directly to the base branch, the release line keeps a
+plain commit link. It costs one pull-request listing request per page plus
+one request per merged pull request examined; results are cached per
+repository and commit. When the repository is not accessible the generator
+falls back to the commit-only line.
 
 ## Development
 

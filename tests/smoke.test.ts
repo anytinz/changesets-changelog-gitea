@@ -1,49 +1,9 @@
-import http from 'node:http'
 import process from 'node:process'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import changelogFunctions from '../src/index.js'
-import type { IncomingMessage, Server } from 'node:http'
-
-const SERVER_URL_BASE = '/api/v1'
-
-interface MockRoute {
-  test: (pathname: string) => RegExpMatchArray | null
-  handler: (match: RegExpMatchArray, req: IncomingMessage) => object | number
-}
-
-const startMockGitea = async (routes: MockRoute[]): Promise<Server> => {
-  return new Promise((resolve) => {
-    const server = http.createServer((req, res) => {
-      res.setHeader('Content-Type', 'application/json')
-      const { pathname } = new URL(req.url ?? '', 'http://localhost')
-
-      const routeMatch = routes
-        .map((route) => {
-          const match = route.test(pathname)
-          return match === null ? undefined : { route, match }
-        })
-        .find((entry) => entry !== undefined)
-
-      if (routeMatch === undefined) {
-        res.writeHead(404)
-        res.end(JSON.stringify({ message: 'No route' }))
-        return
-      }
-
-      const status = routeMatch.route.handler(routeMatch.match, req)
-      if (status === 404) {
-        res.writeHead(404)
-        res.end(JSON.stringify({ message: 'Not Found' }))
-      } else {
-        res.writeHead(200)
-        res.end(JSON.stringify(status))
-      }
-    })
-    server.listen(0, '127.0.0.1', () => {
-      resolve(server)
-    })
-  })
-}
+import { SERVER_URL_BASE, startMockGitea } from './mock-gitea.js'
+import type { Server } from 'node:http'
+import type { MockRoute } from './mock-gitea.js'
 
 const routes: MockRoute[] = [
   {
